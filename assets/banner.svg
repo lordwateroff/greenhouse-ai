@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300">
+  <rect width="1200" height="300" rx="28" fill="#f5f8f0"/>
+  <rect x="0.5" y="0.5" width="1199" height="299" rx="27.5" fill="none" stroke="#dfe7d8"/>
+  <g transform="translate(72 86)">
+    <rect width="128" height="128" rx="36" fill="#2e7d45"/>
+    <g transform="scale(4)">
+      <path d="M16 25v-9" stroke="#f8fcf5" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M16 17c-4.5 0-7-2.6-7-6.5 4.5 0 7 2.6 7 6.5zM16 15c0-4 2.6-6.5 7-6.5 0 4-2.6 6.5-7 6.5z" fill="#f8fcf5"/>
+    </g>
+  </g>
+  <text x="240" y="150" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="64" font-weight="600" fill="#1b2a1e">greenhouse</text>
+  <text x="242" y="200" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#3f5243">Tells you when to water your plant, and how much.</text>
+  <g transform="translate(1010 70)">
+    <path d="M18 14h84l-9 124a8 8 0 0 1-8 7H35a8 8 0 0 1-8-7z" fill="#fcfdf9" stroke="#2e7d45" stroke-width="4"/>
+    <clipPath id="c"><path d="M18 14h84l-9 124a8 8 0 0 1-8 7H35a8 8 0 0 1-8-7z"/></clipPath>
+    <rect y="81" width="120" height="80" fill="#3d86c6" clip-path="url(#c)"/>
+    <path d="M90 39h-10M92 60h-10M93 81h-10M95 102h-10" stroke="#2e7d45" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

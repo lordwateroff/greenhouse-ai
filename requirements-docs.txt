@@ -1,0 +1,7 @@
+-r requirements-dev.txt
+markdown
+python-docx
+pypdf
+python-pptx
+qrcode
+pillow

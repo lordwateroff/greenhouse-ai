@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greenhouse helper</title>
+<meta name="description" content="Tell it what the soil sensor said, and it tells you whether to water your plant and how much.">
+<meta name="theme-color" content="#f5f8f0">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/onest.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/geologica-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top wrap">
+  <a class="logo" href="#main" aria-label="greenhouse, back to top">
+    <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+      <rect width="32" height="32" rx="10" class="logo-bg"/>
+      <path d="M16 25v-9" class="logo-stem"/>
+      <path d="M16 17c-4.5 0-7-2.6-7-6.5 4.5 0 7 2.6 7 6.5z" class="logo-leaf"/>
+      <path d="M16 15c0-4 2.6-6.5 7-6.5 0 4-2.6 6.5-7 6.5z" class="logo-leaf"/>
+    </svg>
+    <span>greenhouse</span>
+  </a>
+  <nav aria-label="Page">
+    <a href="#how">How it thinks</a>
+    <a href="#use">How to use</a>
+    <a href="https://github.com/lordwateroff/greenhouse-ai">Code</a>
+  </nav>
+</header>
+
+<main id="main" class="wrap">
+
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="hero-text">
+      <h1 id="h-hero">Should I water my plant?</h1>
+      <p class="lead">Tell me what the soil sensor said. I will tell you what to do.</p>
+
+      <fieldset class="ask">
+        <legend>Did the sensor beep?</legend>
+        <div class="choices">
+          <button type="button" class="choice" data-obs="alert" aria-pressed="true">Yes, it beeped</button>
+          <button type="button" class="choice" data-obs="no_alert" aria-pressed="false">No, it was quiet</button>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="answer" id="answer" aria-live="polite" data-action="Water">
+      <div class="answer-pic" aria-hidden="true">
+        <svg class="cup" viewBox="0 0 120 150">
+          <path d="M18 14h84l-9 124a8 8 0 0 1-8 7H35a8 8 0 0 1-8-7z" class="cup-glass"/>
+          <clipPath id="cupClip"><path d="M18 14h84l-9 124a8 8 0 0 1-8 7H35a8 8 0 0 1-8-7z"/></clipPath>
+          <rect id="cup-water" x="0" y="0" width="120" height="160" style="transform:translateY(81px)" clip-path="url(#cupClip)" class="cup-water"/>
+          <g class="cup-marks"><path d="M90 39h-10M92 60h-10M93 81h-10M95 102h-10"/></g>
+        </svg>
+        <svg class="clock" viewBox="0 0 120 150">
+          <circle cx="60" cy="78" r="46" class="clock-face"/>
+          <path d="M60 50v28l18 12" class="clock-hand"/>
+        </svg>
+      </div>
+      <div>
+        <p class="answer-big" id="a-head">Water 30 ml now.</p>
+        <p class="answer-why" id="a-why">I am 66% sure the soil is dry, so watering helps.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="notice" id="notice" hidden>I could not reach the helper. <button type="button" class="link" id="retry">Try again</button></p>
+
+  <section id="how" class="block" aria-labelledby="h-how">
+    <h2 id="h-how">How it thinks</h2>
+    <p class="sub">Three small questions, one after another.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="num" aria-hidden="true">1</span>
+        <h3>Is the soil really dry?</h3>
+        <p>The sensor sometimes beeps by mistake. So I first check how much to trust it.</p>
+        <div class="bar-row"><span>Dry</span><div class="bar soil"><i id="b-dry" style="--w:.66"></i></div><b id="b-dry-n">66%</b></div>
+        <div class="bar-row"><span>Fine</span><div class="bar"><i id="b-ok" style="--w:.34"></i></div><b id="b-ok-n">34%</b></div>
+        <p class="tag">Bayes rule</p>
+      </li>
+
+      <li class="step">
+        <span class="num" aria-hidden="true">2</span>
+        <h3>Water now or wait?</h3>
+        <p>I think ahead about today and the days after. The longer bar wins.</p>
+        <div class="bar-row"><span>Water</span><div class="bar"><i id="d-water" style="--w:1"></i></div><b id="d-water-n">49.7</b></div>
+        <div class="bar-row"><span>Wait</span><div class="bar soft"><i id="d-wait" style="--w:.86"></i></div><b id="d-wait-n">42.8</b></div>
+        <p class="tag">Planning ahead (MDP)</p>
+      </li>
+
+      <li class="step">
+        <span class="num" aria-hidden="true">3</span>
+        <h3>How much water?</h3>
+        <p>I try a little more, then a little less, and stop when the plant gets no happier.</p>
+        <div class="doses" id="doses" role="img" aria-label="Plant happiness for each dose. Best is 30 ml.">
+          <div class="dose seen"><i style="--h:.55"></i><span>10</span></div>
+          <div class="dose seen"><i style="--h:.72"></i><span>20</span></div>
+          <div class="dose best"><i style="--h:.88"></i><span>30</span></div>
+          <div class="dose"><i style="--h:.80"></i><span>40</span></div>
+          <div class="dose"><i style="--h:.60"></i><span>50</span></div>
+        </div>
+        <p class="dose-path" id="dose-path">Start at 10 ml, then 20, then 30. Best: 30 ml.</p>
+        <p class="tag">Hill climbing</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="use" class="block" aria-labelledby="h-use">
+    <h2 id="h-use">How to use</h2>
+    <p class="sub">It takes ten seconds.</p>
+    <ol class="howto">
+      <li><span><b>Look at your sensor.</b> Did it beep?</span></li>
+      <li><span><b>Press Yes or No</b> at the top of the page.</span></li>
+      <li><span><b>Do what the green card says.</b> Water the amount it shows, or wait and check later.</span></li>
+    </ol>
+
+    <div class="run">
+      <h3>Run it on your computer</h3>
+      <p>You need Python 3.12 and git. Then type these three lines in a terminal and open <code>localhost:8000</code>.</p>
+<pre><code>git clone https://github.com/lordwateroff/greenhouse-ai
+cd greenhouse-ai &amp;&amp; make setup
+make dev</code></pre>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-more">
+    <details class="more">
+      <summary><h2 id="h-more">Details for the teacher</h2></summary>
+      <div class="more-body">
+        <p>Everything below comes from the same Python code the page calls.</p>
+
+        <h3>Numbers we assume</h3>
+        <dl class="kv">
+          <div><dt>Soil is dry before any beep</dt><dd>30%</dd></div>
+          <div><dt>Sensor beeps when soil is dry</dt><dd>90%</dd></div>
+          <div><dt>Sensor beeps by mistake</dt><dd>20%</dd></div>
+          <div><dt>How much the future counts (γ)</dt><dd>0.9</dd></div>
+          <div><dt>Water wins when P(Dry) is above</dt><dd id="k-thresh">37.6%</dd></div>
+        </dl>
+
+        <h3>Try the weak spot</h3>
+        <p>Hill climbing can stop on a small hill. Turn on the tricky plant to see it, then let it try every start.</p>
+        <div class="toggles">
+          <label><input type="checkbox" id="t-tricky"> Tricky plant</label>
+          <label><input type="checkbox" id="t-restarts"> Try every start</label>
+        </div>
+
+        <h3>What the code did</h3>
+        <ol class="log" id="log"><li>Press Yes or No to see the steps.</li></ol>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <p>Made by Miras Yessenaly for AI Fundamentals, 2026.</p>
+  <p><a href="https://github.com/lordwateroff/greenhouse-ai">Source code on GitHub</a></p>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
